@@ -2,43 +2,16 @@
 	//var_dump($_POST); post input väärtused, premade array
 	require("../../../config.php");
 	
-	//kui on idee sisestatud ja nuppu vajutatud, salvestame selle andmebaasi
-	$database = "if20_harli_kod_vp_1";
-	if(isset($_POST["ideasubmit"]) and !empty($_POST["ideainput"])) {
-		$conn = new mysqli($serverhost, $serverusername, $serverpassword, $database);
-		//valmistan ette sql käsu
-		$stmt = $conn->prepare("INSERT INTO myideas (idea) VALUES (?)");
-		echo $conn->error; //ütleb kui on db error
-		//seome käsuga päris andmed
-		//i - integer, d - decimal, s - string
-		$stmt->bind_param("s", $_POST["ideainput"]);
-		$stmt->execute();
-		echo $stmt->error;
-		$stmt->close();
-		$conn->close();
-	}
-	
-	//loen lehele kõik olemasolevad mõtted
-	$conn = new mysqli($serverhost, $serverusername, $serverpassword, $database);
-	$stmt = $conn->prepare("SELECT idea FROM myideas");
-	echo $conn->error;
-	//seome tulemuse muutujaga
-	$stmt->bind_result($ideafromdb);
-	$stmt->execute();
-	echo $stmt->error;
-	$ideahtml = "";
-	while($stmt->fetch()) {
-		$ideahtml .= "<p>" .$ideafromdb ."</p>";
-	}
-	$stmt->close();
-	$conn->close();
-	
-	$username = "Harli Kodasma";
+	//$username = "Harli Kodasma"; //pole enam vaja, header.php-s olemas
 	$fulltimenow = date("d.m.Y H:i:s");
 	$hournow = date("H");
 	$partofday = "lihtsalt aeg";
 	$weekdaynameset = ["esmaspäev", "teisipäev", "kolmapäev", "neljapäev", "reede", "laupäev", "pühapäev"];
 	$monthnameset = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"];
+	$daynow = date("d");
+	$monthnumbernow = date("n");
+	$yearnow = date("Y");
+	$fullclocknow = date("H:i:s");
 	//echo $weekdaynameset; //nii ei saa arrayd vaadata
 	//var_dump($weekdaynameset); //nii saab arrayd vaadata
 	$weekdaynow = date("N");
@@ -126,10 +99,13 @@
 	//$i = $i + 1;
 	//$i ++;
 	//$i += 2;
-	$imghtml = "";
-	for($i = 0; $i < $piccount; $i ++) {
-		$imghtml .= '<img src="../vp_pics/' .$picfiles[$i] .'" alt="Tallinna Ülikool">'; //.= append
-	}
+	//enne panime siin kõik pildid nähtavale, nüüd valime ühe suvalise
+	//$imghtml = "";
+	//for($i = 0; $i < $piccount; $i ++) {
+		//$imghtml .= '<img src="../vp_pics/' .$picfiles[$i] .'" alt="Tallinna Ülikool">'; //.= append
+	//}
+	$whichpic = mt_rand(0, ($piccount - 1));
+	$imghtml = '<img src="../vp_pics/' .$picfiles[$whichpic] .'" alt="Tallinna Ülikool">';
 	require("header.php");
 ?>
 
@@ -138,7 +114,7 @@
   <p>See veebileht on loodud õppetöö kaigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
   <p>See leht on tehtud veebiprogrammeerimise kursusel 2020. aasta sügissemestril <a href="https://www.tlu.ee">Tallinna Ülikooli</a> Digitehnoloogiate instituudis.</p>
   <p>Kodutööna panin ühe lause juurde.</p>
-  <p>Lehe avamise hetk: <?php echo $weekdaynameset[$weekdaynow - 1] .", " .$fulltimenow; ?>.</p>
+  <p>Lehe avamise hetk: <?php echo $weekdaynameset[$weekdaynow - 1] .", " .$daynow .". " .$monthnameset[$monthnumbernow - 1] ." " .$yearnow .", kell " .$fullclocknow; ?>.</p>
   <p><?php echo "Praegu on " .$partofday ."."; ?></p>
   
   <p>Semester kestab kokku <?php echo $semesterdurationdays; ?> päeva.</p>
@@ -147,12 +123,8 @@
   <hr>
   <?php echo $imghtml; ?>
   <hr>
-  <form method="POST">
-	<label>Sisesta oma pähe tulnud mõte!</label>
-	<input type="text" name="ideainput" placeholder="Kirjuta siia mõte!">
-	<input type="submit" name="ideasubmit" value="Saada mõte ära!">
-  </form>
+  <p><a href="mottesisestus.php">Sisesta oma mõte siin</a></p>
+  <p><a href="motetevaade.php">Vaata sisestatud mõtteid siin</a></p>
   <hr>
-  <?php echo $ideahtml; ?>
 </body>
 </html>

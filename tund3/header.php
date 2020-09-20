@@ -1,3 +1,4 @@
+<?php $username = "Harli Kodasma"; ?>
 <!DOCTYPE html>
 <html lang="et">
 <head>
