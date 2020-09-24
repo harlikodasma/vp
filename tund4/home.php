@@ -119,6 +119,7 @@
     <li><a href="motetevaade.php">Vaata sisestatud mõtteid siin</a></li>
 	<li><a href="listfilms.php">Loe filmiinfot</a></li>
 	<li><a href="addfilm.php">Filmiinfo lisamine</a></li>
+	<li><a href="createaccount.php">Uue kasutaja loomine</a></li>
   </ul>
   
   <p>Lehe avamise hetk: <?php echo $weekdaynameset[$weekdaynow - 1] .", " .$daynow .". " .$monthnameset[$monthnumbernow - 1] ." " .$yearnow .", kell " .$fullclocknow; ?>.</p>
