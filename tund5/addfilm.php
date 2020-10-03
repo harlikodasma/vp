@@ -16,7 +16,7 @@
 			savefilm(test_input($_POST["titleinput"]), intval($_POST["yearinput"]), intval($_POST["durationinput"]), test_input($_POST["genreinput"]), test_input($_POST["studioinput"]), test_input($_POST["directorinput"]));
 		}
 	}
-	require("header.php");
+	require("header_logged.php");
 ?>
 
   <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">

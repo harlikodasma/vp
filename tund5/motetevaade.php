@@ -17,7 +17,7 @@
 	$stmt->close();
 	$conn->close();
 	
-	require("header.php");
+	require("header_logged.php");
 ?>
 
   <b>Kirja pandud mõtted (kõige alumised on kõige uuemad):</b>

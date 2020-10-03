@@ -17,7 +17,7 @@
 		$stmt->close();
 		$conn->close();
 	}
-	require("header.php");
+	require("header_logged.php");
 ?>
 
   <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">

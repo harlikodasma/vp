@@ -2,7 +2,7 @@
 	require("../../../config.php");
 	require("fnc_films.php");
 	//$filmhtml = readfilms();
-	require("header.php");
+	require("header_logged.php");
 ?>
 
   <p><a href="home.php">Tagasi avalehele</a></p>

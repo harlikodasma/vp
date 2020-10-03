@@ -1,6 +1,14 @@
 <?php
+	session_start();
 	//var_dump($_POST); post input väärtused, premade array
 	require("../../../config.php");
+	require("fnc_user.php");
+	require("fnc_common.php");
+	
+	$emailerror = null;
+	$passworderror = null;
+	$loginstatus = null;
+	$email = null;
 	
 	$fulltimenow = date("d.m.Y H:i:s");
 	$hournow = date("H");
@@ -104,20 +112,51 @@
 	$whichpic = mt_rand(0, ($piccount - 1));
 	$imghtml = '<img src="../vp_pics/' .$picfiles[$whichpic] .'" alt="Tallinna Ülikool">';
 	
-	require("header_logged.php");
+	//login
+	if(!empty($_POST["loginsubmit"])) {
+		if(empty($_POST["emailinput"])) {
+			$emailerror = "E-post sisestamata!";
+		} else {
+			if((filter_var(test_input($_POST["emailinput"]), FILTER_VALIDATE_EMAIL)) == null) {
+				$emailerror = "Ebakorrektne e-posti aadress!";
+			} else {
+				$email = test_input($_POST["emailinput"]);
+			}
+		}
+		if(strlen($_POST["passwordinput"]) < 8) {
+			if(empty($_POST["passwordinput"])) {
+				$passworderror = "Salasõna sisestamata!";
+			} else {
+				$passworderror = "Salasõna peab olema vähemalt 8 tähemärki pikk!";
+			}
+		}
+		if(empty($emailerror) and empty($passworderror)) {
+			$_SESSION["username"] = $_POST["emailinput"];
+			$loginstatus = signin($email, $_POST["passwordinput"]);
+		}
+	}
+	
+	require("header_anon.php");
 ?>
+
+  <audio src="../sound/templeos.mp3" autoplay="autoplay" loop="loop"></audio>
   
   <ul>
-    <li><a href="page.php">Logi välja</a></li>
-  </ul>
-  <hr>
-  <ul>
-    <li><a href="mottesisestus.php">Sisesta oma mõte siin</a></li>
-    <li><a href="motetevaade.php">Vaata sisestatud mõtteid siin</a></li>
-	<li><a href="listfilms.php">Loe filmiinfot</a></li>
-	<li><a href="addfilm.php">Filmiinfo lisamine</a></li>
 	<li><a href="createaccount.php">Uue kasutaja loomine</a></li>
   </ul>
+  
+  <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+	  <label for="emailinput">Kasutajatunnus (e-posti aadress)</label>
+	  <input type="email" name="emailinput" id="emailinput" placeholder="rick.tald@yandex.ru" value="<?php echo $email; ?>">
+	  <span><?php echo $emailerror; ?></span>
+	  <br>
+	  <label for="passwordinput">Salasõna</label>
+	  <input type="password" name="passwordinput" id="passwordinput" placeholder="😂😂😂😂😂">
+	  <span><?php echo $passworderror; ?></span>
+	  <br>
+	  <input type="submit" name="loginsubmit" value="Logi sisse">
+    </form>
+  <b><?php echo $loginstatus; ?></b>
   
   <p>Lehe avamise hetk: <?php echo $weekdaynameset[$weekdaynow - 1] .", " .$daynow .". " .$monthnameset[$monthnumbernow - 1] ." " .$yearnow .", kell " .$fullclocknow; ?>.</p>
   <p><?php echo "Praegu on " .$partofday ."."; ?></p>

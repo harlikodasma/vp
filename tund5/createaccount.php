@@ -56,7 +56,11 @@
 		if(empty($_POST["emailinput"])) {
 			$emailerror = "E-post sisestamata!";
 		} else {
-			$email = test_input($_POST["emailinput"]);
+			if((filter_var(test_input($_POST["emailinput"]), FILTER_VALIDATE_EMAIL)) == null) {
+				$emailerror = "Ebakorrektne e-posti aadress!";
+			} else {
+				$email = test_input($_POST["emailinput"]);
+			}
 		}
 		if(empty($_POST["passwordinput"])) {
 			$passworderror = "Salasõna sisestamata!";
@@ -83,7 +87,7 @@
 			}
 		}
 	}
-	require("header.php");
+	require("header_anon.php");
 ?>
 
   <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
@@ -157,6 +161,6 @@
     </form>
 	<span><?php echo $notice; ?></span>
 	<hr>
-  <p><a href="home.php">Tagasi avalehele</a></p>
+  <p><a href="page.php">Tagasi avalehele</a></p>
 </body>
 </html>
