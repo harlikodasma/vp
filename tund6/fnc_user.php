@@ -139,5 +139,22 @@
 	
 	function readuserdescription() {
 		//kui profiil on olemas, loeb kasutaja lühitutvustuse
+		
+		$notice = null;
+		$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
+		$stmt = $conn->prepare("SELECT description FROM vpuserprofiles WHERE userid = ?");
+		echo $conn->error;
+		$stmt->bind_param("i", $_SESSION["userid"]);
+		$stmt->bind_result($descriptionfromdb);
+		if($stmt->execute()) {
+			if($stmt->fetch()) {
+				$_SESSION["userdescription"] = $descriptionfromdb;
+			}
+		} else {
+			$notice = $stmt->error;
+		}
+		$stmt->close();
+		$conn->close();
+		return $notice;
 	}
 ?>

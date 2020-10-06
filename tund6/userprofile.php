@@ -4,7 +4,6 @@
 	require("fnc_user.php");
 	require("fnc_common.php");
 	
-	$userdescription = "";
 	$notice = "";
 	
 	if(isset($_POST["profilesubmit"])) {
@@ -16,6 +15,8 @@
 		$_SESSION["usertxtcolor"] = $_POST["txtcolorinput"];
 	}
 	
+	readuserdescription();
+
 	require("header.php");
 ?>
   <img src="../img/vp_banner_improved.png" alt="Veebiprogrammeerimise kursuse bänner">
@@ -28,7 +29,7 @@
   <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 	  <label for="descriptioninput">Minu lühikirjeldus:</label>
 	  <br>
-	  <textarea rows="10" cols="80" name="descriptioninput" id="descriptioninput" placeholder="Minu lühikirjeldus ..."><?php echo $userdescription; ?></textarea>
+	  <textarea rows="10" cols="80" name="descriptioninput" id="descriptioninput" placeholder="Minu lühikirjeldus ..."><?php if(!empty($_SESSION["userdescription"])) {echo $_SESSION["userdescription"];} ?></textarea>
 	  <br>
 	  <label for="bgcolorinput">Minu valitud taustavärv:</label>
 	  <input type="color" name="bgcolorinput" id="bgcolorinput" value="<?php echo $_SESSION["userbgcolor"]; ?>">
