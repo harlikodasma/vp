@@ -22,6 +22,7 @@
   ?>
   </style>
 
+  <meta charset="UTF-8">
 </head>
 <link rel="icon" href="../img/vp_logo_small_improved.png">
 <body>
