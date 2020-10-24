@@ -9,14 +9,18 @@
 	$notice = null;
 	$studionotice = null;
 	$personnotice = null;
+	$quotenotice = null;
+	$quoteerror = null;
 	$filmtitledropdown = null;
 	$filmstudiodropdown = null;
 	$genredropdown = null;
 	$personnamedropdown = null;
 	$positiondropdown = null;
+	$characterdropdown = null;
 	
 	//filmi pealkirjade listi tegemine
 	$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
+	$conn->set_charset("utf8");
 	$stmt = $conn->prepare("SELECT movie_id, title FROM movie");
 	echo $conn->error;
 	$stmt->bind_result($movieidfromdb, $movietitlefromdb);
@@ -75,6 +79,19 @@
 	if($stmt->execute()) {
 		while($stmt->fetch()) {
 		$positiondropdown .= "\n \t \t" .'<option value="' .$positionidfromdb .'">' .$positionnamefromdb .'</option>';
+		}
+	} else {
+		$notice = $stmt->error;
+	}
+	$stmt->close();
+	
+	//karakterite listi tegemine
+	$stmt = $conn->prepare("SELECT first_name, last_name, role, title, person_in_movie_id FROM person JOIN person_in_movie ON person.person_id = person_in_movie.person_id JOIN movie ON movie.movie_id = person_in_movie.movie_id WHERE role IS NOT NULL"); //JOIN quote ON quote.person_in_movie_id = person_in_movie.person_in_movie_id
+	echo $conn->error;
+	$stmt->bind_result($firstnamefromdb, $lastnamefromdb, $rolefromdb, $titlefromdb, $idfromdb);
+	if($stmt->execute()) {
+		while($stmt->fetch()) {
+		$characterdropdown .= "\n \t \t" .'<option value="' .$idfromdb .'">' .$rolefromdb .' ' .' filmis ' .$titlefromdb .' (näitleja ' .$firstnamefromdb .' ' .$lastnamefromdb .')' .'</option>';
 		}
 	} else {
 		$notice = $stmt->error;
@@ -141,6 +158,9 @@
 	
 	//andmete saatmine db-sse - film x isik
 	if(isset($_POST["personrelationsubmit"])) {
+		if(isset($_POST["roleinput"])) {
+			$role = test_input($_POST["roleinput"]);
+		}
 		if(isset($_POST["filminput"]) and isset($_POST["personinput"]) and isset($_POST["positioninput"]) and isset($_POST["roleinput"])) {
 			$stmt = $conn->prepare("SELECT person_id, movie_id, position_id, role FROM person_in_movie WHERE (person_id = ? AND movie_id = ? AND position_id = ? AND role = ?)");
 			echo $conn->error;
@@ -169,6 +189,39 @@
 			}
 		} else {
 			$personnotice = "Üks valikutest on tegemata!";
+		}
+	}
+	
+	//andmete saatmine db-sse - karakter x tsitaat
+	if(isset($_POST["characterquotesubmit"])) {
+		if(isset($_POST["quoteinput"])) {
+			$quote = test_input($_POST["quoteinput"]);
+		}
+		if(isset($_POST["characterinput"]) and !empty($_POST["quoteinput"])) {
+			$stmt = $conn->prepare("SELECT person_in_movie_id FROM quote WHERE (quote_text = ? AND person_in_movie_id = ?)");
+			echo $conn->error;
+			$stmt->bind_param("si", $_POST["quoteinput"], $_POST["characterinput"]);
+			if($stmt->execute()) {
+				if($stmt->fetch()) {
+					$quotenotice = "Seos on juba olemas!";
+				} else {
+					$stmt->close();
+					$stmt = $conn->prepare("INSERT INTO quote (quote_text, person_in_movie_id) VALUES (?, ?)");
+					echo $conn->error;
+					$quoteinput = test_input($_POST["quoteinput"]);
+					$stmt->bind_param("si", $quoteinput, $_POST["characterinput"]);
+					if($stmt->execute()) {
+						$quotenotice = "Seos salvestatud!";
+					} else {
+						$notice = $stmt->error;
+					}
+					$stmt->close();
+				}
+			} else {
+				$quotenotice = $stmt->error;
+			}
+		} else {
+			$quotenotice = "Kõik andmed pole sisestatud!";
 		}
 	}
 	
@@ -203,7 +256,7 @@
 	</select>
 	<br>
 	<label for="roleinput">Roll:</label>
-	<input type="text" name="roleinput" placeholder="Sisesta roll, keda mängis">
+	<input type="text" name="roleinput" placeholder="Sisesta roll, keda mängis" <?php if(!empty($role)){echo 'value="' .$role .'"';} ?>>
 	<br>
 	<input type="submit" name="personrelationsubmit" value="Salvesta seos isikuga">
 	<?php echo $personnotice; ?>
@@ -247,6 +300,24 @@
 	<br>
 	<input type="submit" name="filmrelationsubmit" value="Salvesta seos žanriga">
 	<?php echo $notice; ?>
+  </form>
+  
+  <hr>
+  
+  <h2>Määrame filmikarakterile tsitaadi</h2>
+  <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+    <label for="characterinput">Tegelane filmis:</label>
+	<select name="characterinput" id="characterinput">
+		<option value="" selected disabled>Vali karakter</option>
+		<?php echo $characterdropdown; ?>
+	</select>
+	<br>
+	<label for="quoteinput">Tsitaat:</label>
+	  <input type="text" name="quoteinput" placeholder="Kui Arno isaga koolimajja jõudis..." <?php if(!empty($quote)){echo 'value="' .$quote .'"';} ?>>
+	  <span><?php echo $quoteerror; ?></span>
+	  <br>
+	<input type="submit" name="characterquotesubmit" value="Seo karakter tsitaadiga">
+	<?php echo $quotenotice; ?>
   </form>
   
   <hr>

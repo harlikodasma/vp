@@ -14,11 +14,17 @@
   <ul>
     <li><a href="mottesisestus.php">Sisesta oma mõte siin</a></li>
     <li><a href="motetevaade.php">Vaata sisestatud mõtteid siin</a></li>
+  </ul>
+  <ul>
 	<li><a href="listfilms.php">Loe filmiinfot</a></li>
-	<li><a href="addfilm.php">Filmiinfo lisamine</a></li>
+	<li><a href="addfilm.php">Filmi lisamine</a></li>
+  </ul>
+  <ul>
+	<li><a href="addfilmdata.php">Filmiga seotud andmete lisamine</a></li>
 	<li><a href="addfilmrelations.php">Filmiandmete vahel seoste loomine</a></li>
-	<li><a href="listfilmpersons.php">Filmitegelased</a></li>
-	<li><a href="createaccount.php">Uue kasutaja loomine</a></li>
+	<li><a href="showfilmdata.php">Filmiandmete kuvamise valikud</a></li>
+  </ul>
+  <ul>
 	<li><a href="userprofile.php">Minu kasutajaprofiil</a></li>
   </ul>
   <hr>

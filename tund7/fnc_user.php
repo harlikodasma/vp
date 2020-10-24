@@ -4,6 +4,7 @@
 	function signup($firstname, $lastname, $email, $gender, $birthdate, $password) {
 		$notice = null;
 		$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
+		$conn->set_charset("utf8");
 		$stmt = $conn->prepare("INSERT INTO vpusers (firstname, lastname, birthdate, gender, email, password) VALUES (?, ?, ?, ?, ?, ?)");
 		echo $conn->error;
 		
@@ -18,15 +19,16 @@
 		} else {
 			$notice = $stmt->error;
 		}
-	$stmt->close();
-	$conn->close();
+		$stmt->close();
+		$conn->close();
 	
-	return $notice;
+		return $notice;
 	}
 	
 	function signin($email, $password) {
 		$notice = null;
 		$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
+		$conn->set_charset("utf8");
 		$stmt = $conn->prepare("SELECT password FROM vpusers WHERE email = ?");
 		echo $conn->error;
 		$stmt->bind_param("s", $email);
@@ -103,6 +105,7 @@
 		
 		$notice = null;
 		$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
+		$conn->set_charset("utf8");
 		$stmt = $conn->prepare("SELECT vpuserprofiles_id FROM vpuserprofiles WHERE userid = ?");
 		echo $conn->error;
 		$stmt->bind_param("i", $_SESSION["userid"]);
@@ -142,6 +145,7 @@
 		
 		$notice = null;
 		$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
+		$conn->set_charset("utf8");
 		$stmt = $conn->prepare("SELECT description FROM vpuserprofiles WHERE userid = ?");
 		echo $conn->error;
 		$stmt->bind_param("i", $_SESSION["userid"]);

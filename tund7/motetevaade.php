@@ -5,6 +5,7 @@
 	//loen lehele kõik olemasolevad mõtted
 	$database = "if20_harli_kod_vp_1";
 	$conn = new mysqli($serverhost, $serverusername, $serverpassword, $database);
+	$conn->set_charset("utf8");
 	$stmt = $conn->prepare("SELECT idea FROM myideas");
 	echo $conn->error;
 	//seome tulemuse muutujaga
