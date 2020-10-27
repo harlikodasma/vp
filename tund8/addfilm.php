@@ -46,7 +46,7 @@
 	  <input type="text" name="directorinput" id="directorinput" placeholder="Lavastaja">
 	  <br>
 	  <input type="submit" name="filmsubmit" value="Salvesta filmi info">
-    </form>
+  </form>
   <p><?php echo $inputerror; ?></p>
   <hr>
   <p><a href="home.php">Tagasi avalehele</a></p>
