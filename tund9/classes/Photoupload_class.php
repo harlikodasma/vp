@@ -4,26 +4,26 @@
 		private $photofiletype;
 		private $mytempimage;
 		private $mynewtempimage;
+		private $filename;
 		
 		function __construct($photoinput, $filetype) {
 			$this->photoinput = $photoinput;
 			//var_dump($this->photoinput);
 			$this->photofiletype = $filetype;
-			$this->createImageFromFile();
 		}
 		
 		function __destruct() {
-			imagedestroy($this->mytempimage);
+			@imagedestroy($this->mytempimage);
 		}
 		
 		private function createImageFromFile() {
-			if($this->photofiletype == "jpg"){
+			if($this->photofiletype == "jpg" or $this->photofiletype == "jpeg") {
 				$this->mytempimage = imagecreatefromjpeg($this->photoinput["tmp_name"]);
 			}
-			if($this->photofiletype == "png"){
+			if($this->photofiletype == "png") {
 				$this->mytempimage = imagecreatefrompng($this->photoinput["tmp_name"]);
 			}
-			if($this->photofiletype == "gif"){
+			if($this->photofiletype == "gif") {
 				$this->mytempimage = imagecreatefromgif($this->photoinput["tmp_name"]);
 			}
 		}
@@ -46,7 +46,7 @@
 					$cutsizeh = $imagew;
 					$cuty = round(($imageh - $cutsizeh) / 2);
 				}	
-			} elseif($keeporigproportion){//kui tuleb originaaproportsioone säilitada
+			} elseif($keeporigproportion){ //kui tuleb originaalproportsioone säilitada
 				if($imagew / $w > $imageh / $h){
 					$newh = round($imageh / ($imagew / $w));
 				} else {
@@ -73,22 +73,22 @@
 		
 		public function saveimage($target){
 			$notice = null;
-			if($this->photofiletype == "jpg"){
-				if(imagejpeg($this->mynewtempimage, $target, 90)){
+			if($this->photofiletype == "jpg" or $this->photofiletype == "jpeg") {
+				if(imagejpeg($this->mynewtempimage, $target, 90)) {
 					$notice = 1;
 				} else {
 					$notice = 0;
 				}
 			}
-			if($this->photofiletype == "png"){
-				if(imagepng($this->mynewtempimage, $target, 6)){
+			if($this->photofiletype == "png") {
+				if(imagepng($this->mynewtempimage, $target, 6)) {
 					$notice = 1;
 				} else {
 					$notice = 0;
 				}
 			}
-			if($this->photofiletype == "gif"){
-				if(imagegif($this->mynewtempimage, $target)){
+			if($this->photofiletype == "gif") {
+				if(imagegif($this->mynewtempimage, $target)) {
 					$notice = 1;
 				} else {
 					$notice = 0;
@@ -109,6 +109,37 @@
 				imagecopy($this->mynewtempimage, $watermark, $wmx, $wmy, 0, 0, $wmw, $wmh);
 				imagedestroy($watermark);
 			}
+		}
+		
+		public function isPhoto($photoFileTypes) {
+			$fileInfo = getimagesize($this->photoinput["tmp_name"]);
+			if(in_array($fileInfo["mime"], $photoFileTypes)) {
+				$this->photofiletype = substr($fileInfo["mime"], 6);
+				echo $this->photofiletype;
+				$this->createImageFromFile();
+				return 1;
+			} else {
+				$this->photofiletype = null;
+			}
+		}
+		
+		public function isAllowedSize($filesizelimit) {
+			if($this->photoinput["size"] > $filesizelimit) {
+				return 1;
+			} else {
+				return null;
+			}
+		}
+		
+		public function createFileName($filenameprefix, $filenamesuffix) {
+			$timestamp = microtime(1) * 10000;
+			if(!empty($filenamesuffix)) {
+				$notice = $this->filename = $filenameprefix .$timestamp ."_" .$filenamesuffix ."." .$this->photofiletype;
+			} else {
+				$notice = $this->filename = $filenameprefix .$timestamp ."." .$this->photofiletype;
+			}
+			$this->createImageFromFile();
+			return $notice;
 		}
 	}
 ?>

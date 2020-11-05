@@ -4,65 +4,31 @@
   require("fnc_photo.php");
   require("fnc_common.php");
   require("classes/Photoupload_class.php");
+  require("../../../config_photo.php");
     
   $inputerror = "";
   $notice = null;
-  $filetype = null;
-  $filesizelimit = 1048576;
-  $photouploaddir_orig = "../photoupload_orig/";
-  $photouploaddir_normal = "../photoupload_normal/";
-  $photouploaddir_thumb = "../photoupload_thumb/";
-  $watermark = "../img/vp_logo_w100_overlay.png";
-  $filenameprefix = "vp_";
-  $filename = null;
-  $photomaxwidth = 600;
-  $photomaxheight = 400;
-  $thumbsize = 100;
-  $privacy = 1;
-  $alttext = null;
     
   //kui klikiti submit, siis ...
-  if(isset($_POST["photosubmit"])){
+  if(isset($_POST["photosubmit"])) {
+	//võtame kasutusele klassi
+	$myphoto = new Photoupload($_FILES["photoinput"], $filetype);
+	
 	$privacy = intval($_POST["privinput"]);
 	$alttext = test_input($_POST["altinput"]);
-	//var_dump($_POST);
-	//var_dump($_FILES);
-	//kas on pilt ja mis tüüpi
-	$check = @getimagesize($_FILES["photoinput"]["tmp_name"]);
-	if($check !== false){
-		//var_dump($check);
-		if($check["mime"] == "image/jpeg"){
-			$filetype = "jpg";
-		}
-		if($check["mime"] == "image/png"){
-			$filetype = "png";
-		}
-		if($check["mime"] == "image/gif"){
-			$filetype = "gif";
-		}
-	} else {
-		$inputerror = "Valitud fail ei ole pilt! ";
+	
+	if(empty($myphoto->isPhoto($photoFileTypes))) {
+		$inputerror = "Valitud fail ei ole pilt!";
 	}
 	
-	//kas on sobiva failisuurusega
-	if(empty($inputerror) and $_FILES["photoinput"]["size"] > $filesizelimit){
+	if(empty($inputerror) and !empty($myphoto->isAllowedSize($filesizelimit))) {
 		$inputerror = "Liiga suur fail!";
 	}
 	
-	//loome uue failinime
-	$timestamp = microtime(1) * 10000;
-	$filename = $filenameprefix .$timestamp ."." .$filetype;
-	
-	//ega fail äkki olemas pole
-	if(file_exists($photouploaddir_orig .$filename)){
-		$inputerror = "Selle nimega fail on juba olemas!";
-	}
-	
 	//kui vigu pole ...
-	if(empty($inputerror)){
+	if(empty($inputerror)) {
+		$filename = $myphoto->createFileName($filenameprefix, $filenamesuffix);
 		
-		//võtame kasutusele klassi
-		$myphoto = new Photoupload($_FILES["photoinput"], $filetype);
 		//teeme pildi väiksemaks
 		$myphoto->resizePhoto($photomaxwidth, $photomaxheight, true);
 		//lisame vesimärgi
@@ -86,7 +52,7 @@
 		unset($myphoto);
 		
 		//salvestame originaalpildi
-		if(empty($inputerror)){
+		if(empty($inputerror)) {
 			if(move_uploaded_file($_FILES["photoinput"]["tmp_name"], $photouploaddir_orig .$filename)){
 				$notice .= " Originaalfaili üleslaadimine õnnestus!";
 			} else {
@@ -94,7 +60,7 @@
 			}
 		}
 		
-		if(empty($inputerror)){
+		if(empty($inputerror)) {
 			$result = storePhotoData($filename, $alttext, $privacy);
 			if($result == 1){
 				$notice .= " Pildi info lisati andmebaasi!";
