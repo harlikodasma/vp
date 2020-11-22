@@ -24,6 +24,7 @@
   
   require("header.php");
 ?>
+  <div class="lehekylg">
   <img src="../img/vp_banner_improved.png" alt="Veebiprogrammeerimise kursuse bänner">
   <h1><?php echo $_SESSION["userfirstname"] ." " .$_SESSION["userlastname"]; ?></h1>
   <p>See veebileht on loodud õppetöö kaigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
@@ -74,5 +75,6 @@
   <?php
 	echo $publicphotothumbshtml;
   ?>
+  </div>
 </body>
 </html>

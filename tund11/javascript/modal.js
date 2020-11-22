@@ -14,6 +14,7 @@ window.onload = function() {
 	}
 	document.getElementById("modalclose").addEventListener("click", closeModal);
 	document.getElementById("storeRating").addEventListener("click", storeRating);
+	document.getElementById("modalimg").addEventListener("click", closeModal);
 }
 
 function openModal(e) {
@@ -23,7 +24,7 @@ function openModal(e) {
 	}
 	
 	//modalimg.src = photodir + e.target.dataset.fn;
-	modalimg.src = "showphoto.php?photo=" + e.target.dataset.fn;
+	modalimg.src = "showphoto.php?photo=" + e.target.dataset.id;
 	
 	photoid = e.target.dataset.id;
 	modalimg.alt = e.target.alt;

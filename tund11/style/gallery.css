@@ -27,4 +27,10 @@
 	opacity: 1;
 	filter: none;
 	transform: scale(1.05);
+	cursor: url(../../cursors/pickaxe.png), auto;
+}
+
+.lehekylg
+{
+	cursor: url(../../cursors/sword.png), auto;
 }

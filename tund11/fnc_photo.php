@@ -56,7 +56,8 @@
 			//<div class="thumbgallery">
 			//<img src="failinimi.laiend" alt="alternatiivtekst" class="thumbs">
 			$temphtml .= '<div class="thumbgallery">' ."\n";
-			$temphtml .= '<img src="' .$GLOBALS["photouploaddir_thumb"] .$filenamefromdb .'" alt="' .$alttextfromdb .'" class="thumbs" data-fn="' .$filenamefromdb .'" data-id="' .$idfromdb .'">' ."\n";
+			//$temphtml .= '<img src="' .$GLOBALS["photouploaddir_thumb"] .$filenamefromdb .'" alt="' .$alttextfromdb .'" class="thumbs" data-fn="' .$filenamefromdb .'" data-id="' .$idfromdb .'">' ."\n";
+			$temphtml .= '<img src="showphoto.php?photo=' .$idfromdb .'&thumb=1' .'" alt="' .$alttextfromdb .'" class="thumbs" data-id="' .$idfromdb .'">' ."\n";
 			$temphtml .= "</div> \n";
 		}
 		if(!empty($temphtml)) {
