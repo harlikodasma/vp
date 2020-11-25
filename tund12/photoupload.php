@@ -30,7 +30,6 @@
 	//kui vigu pole ...
 	if(empty($inputerror)) {
 		$filename = $myphoto->createFileName($filenameprefix, $filenamesuffix);
-		
 		//teeme pildi väiksemaks
 		$myphoto->resizePhoto($photomaxwidth, $photomaxheight, true);
 		//lisame vesimärgi

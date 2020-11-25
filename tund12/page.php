@@ -140,15 +140,23 @@
 	}
 	
 	$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], "if20_harli_kod_vp_1");
-	$stmt = $conn->prepare("SELECT title, content, firstname, lastname, added FROM vpnews JOIN vpusers ON vpusers.vpusers_id = vpnews.userid WHERE deleted IS NULL ORDER BY vpnews_id DESC LIMIT 5");
+	$stmt = $conn->prepare("SELECT title, content, firstname, lastname, added, expire, filename FROM vpnews JOIN vpusers ON vpusers.vpusers_id = vpnews.userid LEFT JOIN vpnewsphotos ON vpnews.vpnewsphotos_id = vpnewsphotos.vpnewsphotos_id WHERE deleted IS NULL AND expire IS NULL OR expire > CURDATE() ORDER BY vpnews_id DESC LIMIT 5");
 	echo $conn->error;
-	$stmt->bind_result($newstitlefromdb, $newscontentfromdb, $authorfirstnamefromdb, $authorlastnamefromdb, $uploaddate);
+	$stmt->bind_result($newstitlefromdb, $newscontentfromdb, $authorfirstnamefromdb, $authorlastnamefromdb, $uploaddate, $expiredate, $filename);
 	$stmt->execute();
 	while($stmt->fetch()) {
-		$newshtml .= "\t" ."<h3>" .$newstitlefromdb ."</h3> \n \t" ."<p>Autor: <strong>" .$authorfirstnamefromdb ." " .$authorlastnamefromdb ."</strong></p>" ."\n \t" ."Lisatud: <strong>" .$uploaddate ."</strong>" ."\n \t" .htmlspecialchars_decode($newscontentfromdb) ."\n";
+		if($expiredate == null and $filename != null) {
+			$newshtml .= "\t" ."<h3>" .$newstitlefromdb ."</h3> \n \t" ."<p>Autor: <strong>" .$authorfirstnamefromdb ." " .$authorlastnamefromdb ."</strong></p>" ."\n \t" ."<p>Lisatud: <strong>" .$uploaddate ."</strong></p>" ."\n \t" .'<img src="../photoupload_news/' .$filename .'">' ."\n \t" .htmlspecialchars_decode($newscontentfromdb) ."\n";
+		} elseif($expiredate == null and $filename == null) {
+			$newshtml .= "\t" ."<h3>" .$newstitlefromdb ."</h3> \n \t" ."<p>Autor: <strong>" .$authorfirstnamefromdb ." " .$authorlastnamefromdb ."</strong></p>" ."\n \t" ."Lisatud: <strong>" .$uploaddate ."</strong>" ."\n \t" .htmlspecialchars_decode($newscontentfromdb) ."\n";
+		} elseif($expiredate != null and $filename == null) {
+			$newshtml .= "\t" ."<h3>" .$newstitlefromdb ."</h3> \n \t" ."<p>Autor: <strong>" .$authorfirstnamefromdb ." " .$authorlastnamefromdb ."</strong></p>" ."\n \t" ."<p>Lisatud: <strong>" .$uploaddate ."</strong></p>" ."\n \t" ."Aegub: <strong>" .$expiredate ."</strong>" ."\n \t" .htmlspecialchars_decode($newscontentfromdb) ."\n";
+		} elseif($expiredate != null and $filename != null) {
+			$newshtml .= "\t" ."<h3>" .$newstitlefromdb ."</h3> \n \t" ."<p>Autor: <strong>" .$authorfirstnamefromdb ." " .$authorlastnamefromdb ."</strong></p>" ."\n \t" ."<p>Lisatud: <strong>" .$uploaddate ."</strong></p>" ."\n \t" ."<p>Aegub: <strong>" .$expiredate ."</strong></p>" ."\n \t" .'<img src="../photoupload_news/' .$filename .'">' ."\n \t" .htmlspecialchars_decode($newscontentfromdb) ."\n";
+		}
 	}
 	if(!empty($newshtml)) {
-			$newshtml = "<div> \n" .$newshtml ."\n  </div> \n";
+		$newshtml = "<div> \n" .$newshtml ."\n  </div> \n";
 	} else {
 		$newshtml = "<p>Kahjuks uudiseid ei leitud!</p> \n";
 	}

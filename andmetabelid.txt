@@ -15,3 +15,9 @@ CREATE TABLE `if20_harli_kod_vp_1`.`vpphotoratings` ( `vpphotoratings_id` INT(11
 
 uudiste tabel
 CREATE TABLE `if20_harli_kod_vp_1`.`vpnews` ( `vpnews_id` INT(11) NOT NULL AUTO_INCREMENT , `userid` INT(11) NOT NULL , `title` VARCHAR(140) NOT NULL , `content` VARCHAR(2000) NOT NULL , `expire` DATE , `added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , `deleted` DATETIME NULL , PRIMARY KEY (`vpnews_id`)) ENGINE = InnoDB;
+
+uudiste piltide tabel vana!
+CREATE TABLE `if20_harli_kod_vp_1`. ( `vpnewsphotos_id` INT(11) NOT NULL AUTO_INCREMENT , `userid` INT(11) NOT NULL , `filename` VARCHAR(40) CHARACTER SET utf8 COLLATE utf8_estonian_ci NOT NULL , `created` DATE NOT NULL DEFAULT CURRENT_TIMESTAMP , `expire` DATE NULL , PRIMARY KEY (`vpnewsphotos_id`)) ENGINE = InnoDB;
+
+uudiste piltide tabel uus!
+CREATE TABLE `if20_harli_kod_vp_1`. ( `vpnewsphotos_id` INT(11) NOT NULL AUTO_INCREMENT , `filename` VARCHAR(40) CHARACTER SET utf8 COLLATE utf8_estonian_ci NOT NULL , PRIMARY KEY (`vpnewsphotos_id`)) ENGINE = InnoDB;
