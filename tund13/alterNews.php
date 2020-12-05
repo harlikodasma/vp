@@ -9,19 +9,25 @@
 	$id = $_REQUEST["id"];
 	
 	$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], "if20_harli_kod_vp_1");
-	$stmt = $conn->prepare("SELECT vpnews_id FROM vpnews WHERE vpnews_id = ?");
+	$stmt = $conn->prepare("SELECT vpnews_id, deleted FROM vpnews WHERE vpnews_id = ?");
 	$stmt->bind_param("i", $id);
-	$stmt->bind_result($id);
+	$stmt->bind_result($id, $isdeleted);
 	$stmt->execute();
 	$stmt->fetch();
 	$stmt->close();
 	$conn->close();
 	
 	if(empty($id)) {
-		echo "Uudis kustutatud.";
+		echo '<p>Sellist uudist ei ole olemas.</p>';
 		echo '<p><a href="home.php">Avalehele</a></p>';
-		echo '<style>.lol { font-size: 10px; }</style>';
-		echo '<p class="lol">Või sa sattusid siia URLi näppides, siis küll midagi ei kustutatud.</p>';
+		echo '<p><a href="editnews.php">Tagasi uudiste nimekirja</a></p>';
+		exit();
+	}
+	
+	if($isdeleted != null) {
+		echo '<p>See uudis on kustutatud, seda ei saa muuta.</p>';
+		echo '<p><a href="home.php">Avalehele</a></p>';
+		echo '<p><a href="editnews.php">Tagasi uudiste nimekirja</a></p>';
 		exit();
 	}
 	
@@ -133,14 +139,30 @@
 			} else {
 				$stmt = $conn->prepare("SELECT MAX(vpnewsphotos_id) FROM vpnewsphotos");
 				echo $conn->error;
-				$stmt->bind_result($photoid);
+				$stmt->bind_result($newphotoid);
 				$stmt->execute();
 				$stmt->fetch();
 				$stmt->close();
 				
+				$stmt = $conn->prepare("SELECT vpnewsphotos_id FROM vpnews WHERE vpnews_id = ?");
+				echo $conn->error;
+				$stmt->bind_param("i", $id);
+				$stmt->bind_result($oldphotoid);
+				$stmt->execute();
+				$stmt->fetch();
+				$stmt->close();
+				
+				if($oldphotoid != null) {
+					$stmt = $conn->prepare("UPDATE vpnewsphotos SET deleted = NOW() WHERE vpnewsphotos_id = ?");
+					echo $conn->error;
+					$stmt->bind_param("i", $oldphotoid);
+					$stmt->execute();
+					$stmt->close();
+				}
+				
 				$stmt = $conn->prepare("UPDATE vpnews SET title = ?, content = ?, expire = ?, vpnewsphotos_id = ? WHERE vpnews_id = ?");
 				echo $conn->error;
-				$stmt->bind_param("sssii", $newstitle, $news, $expiredate, $photoid, $id);
+				$stmt->bind_param("sssii", $newstitle, $news, $expiredate, $newphotoid, $id);
 				if($stmt->execute()){
 					$newsnotice = "Uudis on muudetud!";
 				} else {
@@ -175,33 +197,101 @@
 			}
 			$stmt->close();
 			
-			$stmt = $conn->prepare("SELECT filename FROM vpnewsphotos WHERE vpnewsphotos_id = ?");
+			//$stmt = $conn->prepare("SELECT filename FROM vpnewsphotos WHERE vpnewsphotos_id = ?");
+			//echo $conn->error;
+			//$stmt->bind_param("i", $photoidfromdb);
+			//$stmt->bind_result($filenamefromdb);
+			//if($stmt->execute()) {
+				//$newsnotice .= 1;
+			//}
+			//$stmt->fetch();
+			//$stmt->close();
+			
+			$stmt = $conn->prepare("UPDATE vpnewsphotos SET deleted = NOW() WHERE vpnewsphotos_id = ?");
 			echo $conn->error;
 			$stmt->bind_param("i", $photoidfromdb);
-			$stmt->bind_result($filenamefromdb);
 			if($stmt->execute()) {
 				$newsnotice .= 1;
 			}
-			$stmt->fetch();
 			$stmt->close();
-			
-			$stmt = $conn->prepare("DELETE FROM vpnewsphotos WHERE vpnewsphotos_id = ?");
-			echo $conn->error;
-			$stmt->bind_param("i", $photoidfromdb);
-			if($stmt->execute()) {
-				$newsnotice .= 1;
-			}
-			$stmt->close();
-			
 			$conn->close();
 			
-			if(unlink("../photoupload_news/" .$filenamefromdb)) {
-				$newsnotice .= 1;
-			}
+			//if(unlink("../photoupload_news/" .$filenamefromdb)) {
+				//$newsnotice .= 1;
+			//}
 			
-			if($newsnotice == 11111) {
+			if($newsnotice == 111) {
 				$newsnotice = "Foto on edukalt kustutatud.";
 			}
+		}
+	}
+	
+	if(isset($_POST["deleteexpiredate"])) {
+		$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], "if20_harli_kod_vp_1");
+		$stmt = $conn->prepare("SELECT expire FROM vpnews WHERE vpnews_id = ?");
+		echo $conn->error;
+		$stmt->bind_param("i", $id);
+		$stmt->bind_result($expiredatefromdb);
+		if($stmt->execute()) {
+			$newsnotice = 1;
+		}
+		$stmt->fetch();
+		$stmt->close();
+		
+		if($expiredatefromdb == null) {
+			$newsnotice = "Sellel uudisel ei ole aegumiskuupäeva, mida kustutada!";
+		} else {
+			$stmt = $conn->prepare("UPDATE vpnews SET expire = null WHERE vpnews_id = ?");
+			echo $conn->error;
+			$stmt->bind_param("i", $id);
+			if($stmt->execute()) {
+				$newsnotice .= 1;
+			}
+			$stmt->close();
+			$conn->close();
+		}
+		
+		if($newsnotice == 11) {
+			$newsnotice = "Aegumiskuupäev on edukalt kustutatud.";
+			$expiredate = null;
+			$expireday = null;
+			$expiremonth = null;
+			$expireyear = null;
+		}
+	}
+	
+	if(isset($_POST["newsdelete"])) {
+		$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], "if20_harli_kod_vp_1");
+		$stmt = $conn->prepare("SELECT vpnewsphotos_id FROM vpnews WHERE vpnews_id = ?");
+		echo $conn->error;
+		$stmt->bind_param("i", $id);
+		$stmt->bind_result($photoidfromdb);
+		if($stmt->execute()) {
+			$newsnotice = 1;
+		}
+		$stmt->fetch();
+		$stmt->close();
+		if($photoidfromdb != null) {
+			$stmt = $conn->prepare("UPDATE vpnewsphotos SET deleted = NOW() WHERE vpnewsphotos_id = ?");
+			echo $conn->error;
+			$stmt->bind_param("i", $photoidfromdb);
+			if($stmt->execute()) {
+				$newsnotice .= 1;
+			}
+			$stmt->close();
+		}
+		
+		$stmt = $conn->prepare("UPDATE vpnews SET deleted = NOW() WHERE vpnews_id = ?");
+		echo $conn->error;
+		$stmt->bind_param("i", $id);
+		if($stmt->execute()) {
+			$newsnotice .= 1;
+		}
+		$stmt->close();
+		$conn->close();
+		
+		if($newsnotice == 111 or $newsnotice == 11) {
+			$newsnotice = "Uudis on edukalt kustutatud, võid siit lehelt lahkuda. Uuesti laadides sind enam siia ei lasta.";
 		}
 	}
 	

@@ -140,7 +140,7 @@
 	}
 	
 	$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], "if20_harli_kod_vp_1");
-	$stmt = $conn->prepare("SELECT title, content, firstname, lastname, added, expire, filename FROM vpnews JOIN vpusers ON vpusers.vpusers_id = vpnews.userid LEFT JOIN vpnewsphotos ON vpnews.vpnewsphotos_id = vpnewsphotos.vpnewsphotos_id WHERE deleted IS NULL AND expire IS NULL OR expire > CURDATE() ORDER BY vpnews_id DESC LIMIT 5");
+	$stmt = $conn->prepare("SELECT title, content, firstname, lastname, added, expire, filename FROM vpnews JOIN vpusers ON vpusers.vpusers_id = vpnews.userid LEFT JOIN vpnewsphotos ON vpnews.vpnewsphotos_id = vpnewsphotos.vpnewsphotos_id WHERE vpnews.deleted IS NULL AND expire IS NULL OR expire > CURDATE() ORDER BY vpnews_id DESC LIMIT 5");
 	echo $conn->error;
 	$stmt->bind_result($newstitlefromdb, $newscontentfromdb, $authorfirstnamefromdb, $authorlastnamefromdb, $uploaddate, $expiredate, $filename);
 	$stmt->execute();
