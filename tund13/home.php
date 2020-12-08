@@ -24,7 +24,7 @@
 	
 	require("header.php");
 ?>
-  <audio src="../sound/arabic.mp3" autoplay="autoplay" loop="loop"></audio>
+  <!--<audio src="../sound/arabic.mp3" autoplay="autoplay" loop="loop"></audio>-->
   
   <img src="../img/vp_banner_improved.png" alt="Veebiprogrammeerimise kursuse bänner">
   <h1><?php echo $_SESSION["userfirstname"] ." " .$_SESSION["userlastname"]; ?></h1>
@@ -53,6 +53,11 @@
   <ul>
 	<li><a href="addnews.php">Uudiste lisamine</a></li>
 	<li><a href="editnews.php">Uudiste toimetamine</a></li>
+  </ul>
+  <ul>
+	<li><a href="../harjutus/addfreight.php">Uue viljaveo lisamine</a></li>
+	<li><a href="../harjutus/editfreight.php">Väljumiskaalu hilisem lisamine</a></li>
+	<li><a href="../harjutus/showfreights.php">Viljavedude kokkuvõtte vaatamine</a></li>
   </ul>
   <hr>
   <h3>Viimane külastaja sellest arvutist</h3>

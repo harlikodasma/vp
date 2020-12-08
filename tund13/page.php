@@ -166,7 +166,7 @@
 	require("header.php");
 ?>
 
-  <audio src="../sound/templeos.mp3" autoplay="autoplay" loop="loop"></audio>
+  <!--<audio src="../sound/templeos.mp3" autoplay="autoplay" loop="loop"></audio>-->
   
   <img src="../img/vp_banner_improved.png" alt="Veebiprogrammeerimise kursuse bänner">
   <h1>Noic veebileht</h1>
@@ -180,11 +180,11 @@
   
   <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 	  <label for="emailinput">Kasutajatunnus (e-posti aadress)</label>
-	  <input type="email" name="emailinput" id="emailinput" placeholder="rick.tald@yandex.ru" value="<?php echo $email; ?>">
+	  <input type="email" name="emailinput" id="emailinput" value="<?php echo $email; ?>"> <!--placeholder="rick.tald@yandex.ru"-->
 	  <span><?php echo $emailerror; ?></span>
 	  <br>
 	  <label for="passwordinput">Salasõna</label>
-	  <input type="password" name="passwordinput" id="passwordinput" placeholder="😂😂😂😂😂">
+	  <input type="password" name="passwordinput" id="passwordinput"> <!--placeholder="😂😂😂😂😂"-->
 	  <span><?php echo $passworderror; ?></span>
 	  <br>
 	  <input type="submit" name="loginsubmit" value="Logi sisse">

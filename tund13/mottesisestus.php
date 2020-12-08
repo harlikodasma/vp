@@ -6,6 +6,8 @@
 	//kui on idee sisestatud ja nuppu vajutatud, salvestame selle andmebaasi
 	$database = "if20_harli_kod_vp_1";
 	if(isset($_POST["ideasubmit"]) and !empty($_POST["ideainput"])) {
+		$ideainput = $_POST["ideainput"];
+		
 		$conn = new mysqli($serverhost, $serverusername, $serverpassword, $database);
 		$conn->set_charset("utf8");
 		//valmistan ette sql käsu
@@ -13,7 +15,7 @@
 		echo $conn->error; //ütleb kui on db error
 		//seome käsuga päris andmed
 		//i - integer, d - decimal, s - string
-		$stmt->bind_param("s", test_input($_POST["ideainput"]));
+		$stmt->bind_param("s", $ideainput);
 		$stmt->execute();
 		echo $stmt->error;
 		$stmt->close();

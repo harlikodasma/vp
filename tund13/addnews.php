@@ -6,7 +6,7 @@
   require("classes/Photoupload_class.php");
   require("../../../config_photo.php");
   
-  $tolink = "\t" .'<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>' ."\n";
+  $tolink = "\t" .'<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"></script>' ."\n";
   $tolink .= "\t" .'<script>tinymce.init({selector:"textarea#newsinput", plugins: "link", menubar: "edit",});</script>' ."\n";
     
   $inputerror = "";
