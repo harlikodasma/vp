@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="et">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <title>Noic veebileht</title>
   
   <?php
@@ -28,7 +28,6 @@
   ?>
   </style>
 
-  <meta charset="UTF-8">
   <link rel="icon" href="../img/vp_logo_small_improved.png">
   
 </head>
